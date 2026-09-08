@@ -13,7 +13,17 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@nestjs/jwt": "^12.0.1",
+    "@nestjs/passport": "^12.0.0",
+    "@nestjs/typeorm": "^12.0.1",
+    "bcrypt": "^6.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.23.0",
     "pinia": "^4.0.2",
+    "typeorm": "^1.1.1",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
   },
