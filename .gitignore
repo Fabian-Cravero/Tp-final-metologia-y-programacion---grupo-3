@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Build
+backend/dist/
+frontend/dist/
+*.tsbuildinfo
+
+# Variables de entorno (cada uno tiene la suya, nunca se commitea)
+.env
+backend/.env
+frontend/.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDEs / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tests
+coverage/
