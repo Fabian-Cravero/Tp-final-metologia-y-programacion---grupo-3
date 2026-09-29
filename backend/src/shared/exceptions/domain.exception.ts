@@ -12,7 +12,7 @@ export class DomainException extends Error {
 /**
  * Se lanza cuando dos peticiones simultáneas chocan sobre el mismo recurso
  * (turno, cama) y el locking optimista de TypeORM detecta el conflicto.
- * Ver sección 06 del informe (Concurrencia en SQL Server).
+ * Ver sección 06 del informe (Concurrencia en PostgreSQL).
  */
 export class ConflictoDeConcurrenciaException extends DomainException {
   constructor(recurso: string) {
