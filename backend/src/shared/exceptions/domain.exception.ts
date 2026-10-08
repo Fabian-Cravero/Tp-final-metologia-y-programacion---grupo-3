@@ -20,3 +20,24 @@ export class ConflictoDeConcurrenciaException extends DomainException {
     this.name = 'ConflictoDeConcurrenciaException';
   }
 }
+
+export class RecursoNoEncontradoException extends DomainException {
+  constructor(recurso: string) {
+    super(`${recurso} no encontrado`);
+    this.name = 'RecursoNoEncontradoException';
+  }
+}
+
+export class TransicionInvalidaException extends DomainException {
+  constructor(mensaje: string) {
+    super(mensaje);
+    this.name = 'TransicionInvalidaException';
+  }
+}
+
+export class CredencialesInvalidasException extends DomainException {
+  constructor() {
+    super('Email o contraseña incorrectos');
+    this.name = 'CredencialesInvalidasException';
+  }
+}

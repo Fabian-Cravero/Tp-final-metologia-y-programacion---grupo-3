@@ -21,6 +21,7 @@ async function bootstrap() {
     .setTitle('HIS API')
     .setDescription('Sistema de Información Hospitalario')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

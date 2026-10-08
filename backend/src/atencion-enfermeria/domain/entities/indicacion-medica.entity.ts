@@ -18,6 +18,13 @@ export class IndicacionMedica {
   @Column({ type: 'text' })
   descripcion: string;
 
+  // Solo para tipo 'medicacion': qué insumo se descuenta y cuántas unidades.
+  @Column({ type: 'uuid', nullable: true })
+  insumoId: string | null;
+
+  @Column({ type: 'int', nullable: true })
+  cantidad: number | null;
+
   // pendiente | cumplida | cancelada
   @Column({ type: 'varchar', default: 'pendiente' })
   estado: string;

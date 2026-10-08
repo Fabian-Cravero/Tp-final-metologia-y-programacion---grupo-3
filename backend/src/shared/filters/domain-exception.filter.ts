@@ -1,6 +1,11 @@
-import { ArgumentsHost, Catch, ConflictException, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { ConflictoDeConcurrenciaException, DomainException } from '../exceptions/domain.exception';
+import {
+  ConflictoDeConcurrenciaException,
+  CredencialesInvalidasException,
+  DomainException,
+  RecursoNoEncontradoException,
+} from '../exceptions/domain.exception';
 
 /**
  * Traduce excepciones de dominio a respuestas HTTP correctas, para que los
@@ -9,17 +14,20 @@ import { ConflictoDeConcurrenciaException, DomainException } from '../exceptions
 @Catch(DomainException)
 export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: DomainException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-
-    const status = exception instanceof ConflictoDeConcurrenciaException
-      ? new ConflictException().getStatus()
-      : 422;
+    const response = host.switchToHttp().getResponse<Response>();
+    const status = this.estadoHttp(exception);
 
     response.status(status).json({
       statusCode: status,
       error: exception.name,
       message: exception.message,
     });
+  }
+
+  private estadoHttp(exception: DomainException): number {
+    if (exception instanceof ConflictoDeConcurrenciaException) return HttpStatus.CONFLICT;
+    if (exception instanceof RecursoNoEncontradoException) return HttpStatus.NOT_FOUND;
+    if (exception instanceof CredencialesInvalidasException) return HttpStatus.UNAUTHORIZED;
+    return HttpStatus.UNPROCESSABLE_ENTITY;
   }
 }

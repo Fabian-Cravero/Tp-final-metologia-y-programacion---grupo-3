@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,12 @@ import {
 import { Medico } from './medico.entity';
 import { Paciente } from './paciente.entity';
 
+// Defensa real contra la doble reserva: un médico no puede tener dos turnos
+// activos en el mismo horario. Un turno cancelado libera el horario.
+@Index('uq_turno_medico_horario_activo', ['medico', 'fechaHora'], {
+  unique: true,
+  where: `"estado" <> 'cancelado'`,
+})
 @Entity('turnos')
 export class Turno {
   @PrimaryGeneratedColumn('uuid')
@@ -25,8 +32,8 @@ export class Turno {
   @Column({ type: 'timestamptz' })
   fechaHora: Date;
 
-  // reservado | confirmado | en_atencion | atendido | cancelado (State pattern, más adelante)
-  @Column({ type: 'varchar', default: 'reservado' })
+  // programado | confirmado | en_sala_espera | atendido | cancelado (State pattern)
+  @Column({ type: 'varchar', default: 'programado' })
   estado: string;
 
   // normal | urgente | codigo_rojo (triaje)

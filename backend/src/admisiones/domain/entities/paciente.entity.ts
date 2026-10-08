@@ -27,6 +27,10 @@ export class Paciente {
   @Column({ type: 'uuid', nullable: true })
   coberturaId: string | null;
 
+  // Usuario (IAM) con el que el paciente inicia sesión. Solo el id: no se acoplan módulos.
+  @Column({ type: 'uuid', nullable: true, unique: true })
+  usuarioId: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   creadoEn: Date;
 }

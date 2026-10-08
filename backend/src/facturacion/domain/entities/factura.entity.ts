@@ -24,6 +24,10 @@ export class Factura {
   @Column({ type: 'numeric', precision: 12, scale: 2, default: 0 })
   total: string;
 
+  // total = lo que paga el paciente; montoCubierto = lo que absorbe la cobertura.
+  @Column({ type: 'numeric', precision: 12, scale: 2, default: 0 })
+  montoCubierto: string;
+
   // pendiente | emitida | pagada | anulada
   @Column({ type: 'varchar', default: 'pendiente' })
   estado: string;

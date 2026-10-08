@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { typeOrmConfig } from './shared/config/typeorm.config';
+import { EventosModule } from './shared/events/eventos.module';
 
 import { IamModule } from './iam/iam.module';
 import { AdmisionesModule } from './admisiones/admisiones.module';
@@ -17,6 +19,8 @@ import { FacturacionModule } from './facturacion/facturacion.module';
       inject: [ConfigService],
       useFactory: typeOrmConfig,
     }),
+    EventEmitterModule.forRoot(),
+    EventosModule,
     IamModule,
     AdmisionesModule,
     HistoriaClinicaModule,
