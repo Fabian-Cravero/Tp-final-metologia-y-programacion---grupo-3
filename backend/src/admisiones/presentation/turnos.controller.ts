@@ -35,7 +35,9 @@ export class TurnosController {
   @Get()
   @Roles(RolUsuario.RECEPCIONISTA, RolUsuario.MEDICO, RolUsuario.ADMIN)
   listar(@Query('medicoId', ParseUUIDPipe) medicoId: string, @Query('dia') dia: string) {
-    return this.agenda.ejecutar(medicoId, new Date(dia));
+    // 'AAAA-MM-DD' sin hora se interpreta como día local (no como medianoche UTC).
+    const fecha = /^\d{4}-\d{2}-\d{2}$/.test(dia) ? new Date(`${dia}T00:00:00`) : new Date(dia);
+    return this.agenda.ejecutar(medicoId, fecha);
   }
 
   @Patch(':id/confirmar')
