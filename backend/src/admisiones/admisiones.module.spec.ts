@@ -21,12 +21,12 @@ describe('AdmisionesModule', () => {
   });
 
   describe('AdmisionesController.ping()', () => {
-    it('identifica al módulo y avisa que falta implementar', () => {
+    it('identifica al módulo y indica que el módulo está implementado', () => {
       const controller = moduleRef.get(AdmisionesController);
 
       expect(controller.ping()).toEqual({
         modulo: 'admisiones',
-        estado: 'estructura lista, falta implementar',
+        estado: 'módulo implementado',
       });
     });
   });

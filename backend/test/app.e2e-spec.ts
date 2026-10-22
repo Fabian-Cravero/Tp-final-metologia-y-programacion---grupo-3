@@ -64,7 +64,7 @@ describe('HIS API (e2e)', () => {
   describe('GET /<modulo>/ping', () => {
     it.each([
       ['iam', 'estructura lista, falta implementar login'],
-      ['admisiones', 'estructura lista, falta implementar'],
+      ['admisiones', 'módulo implementado'],
       ['historia-clinica', 'estructura lista, falta implementar'],
       ['atencion-enfermeria', 'estructura lista, falta implementar'],
       ['camas', 'estructura lista, falta implementar'],

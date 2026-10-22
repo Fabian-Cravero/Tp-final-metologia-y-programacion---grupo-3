@@ -1,6 +1,6 @@
 import { TransicionInvalidaException } from '../../../shared/exceptions/domain.exception';
 import { siguienteEstado } from '../turno-workflow';
-import { type EstadoTurno } from './turno-estado';
+import { EstadoTurno } from './turno-estado';
 
 describe('Máquina de estados del turno', () => {
   it('recorre el camino feliz: programado -> confirmado -> en sala -> atendido', () => {

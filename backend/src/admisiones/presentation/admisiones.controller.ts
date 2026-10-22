@@ -6,6 +6,6 @@ import { ApiTags } from '@nestjs/swagger';
 export class AdmisionesController {
   @Get('ping')
   ping() {
-    return { modulo: 'admisiones', estado: 'estructura lista, falta implementar' };
+    return { modulo: 'admisiones', estado: 'módulo implementado' };
   }
 }
