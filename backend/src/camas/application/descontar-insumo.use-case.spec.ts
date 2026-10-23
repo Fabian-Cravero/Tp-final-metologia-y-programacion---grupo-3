@@ -15,6 +15,7 @@ class InventarioEnMemoria implements IInventarioRepository {
     return true;
   }
   async stockTotal() { return this.stock; }
+  async listarInsumos() { return []; }
 }
 
 describe('DescontarInsumoUseCase', () => {

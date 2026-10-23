@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { RolUsuario } from '../../iam/domain/enums/rol.enum';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
@@ -12,15 +11,8 @@ import { CrearCamaUseCase } from '../application/crear-cama.use-case';
 import { HabilitarCamaUseCase } from '../application/habilitar-cama.use-case';
 import { LiberarCamaUseCase } from '../application/liberar-cama.use-case';
 import { ObtenerMapaCamasUseCase } from '../application/obtener-mapa-camas.use-case';
-
-class AsignarCamaDto {
-  @IsUUID() pacienteId: string;
-}
-
-class CrearCamaDto {
-  @IsString() @IsNotEmpty() codigo: string;
-  @IsString() @IsNotEmpty() sector: string;
-}
+import { AsignarCamaDto } from './dto/asignar-cama.dto';
+import { CrearCamaDto } from './dto/crear-cama.dto';
 
 @ApiTags('camas')
 @ApiBearerAuth()

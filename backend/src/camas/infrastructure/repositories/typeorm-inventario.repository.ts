@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Insumo } from '../../domain/entities/insumo.entity';
 import { StockInsumo } from '../../domain/entities/stock-insumo.entity';
-import { type IInventarioRepository } from '../../domain/repositories/inventario-repository.interface';
+import {
+  type IInventarioRepository,
+  type InsumoConStock,
+} from '../../domain/repositories/inventario-repository.interface';
 
 @Injectable()
 export class TypeOrmInventarioRepository implements IInventarioRepository {
@@ -51,5 +54,25 @@ export class TypeOrmInventarioRepository implements IInventarioRepository {
       .where('s."insumoId" = :insumoId', { insumoId })
       .getRawOne<{ total: string }>();
     return Number(fila?.total ?? 0);
+  }
+
+  async listarInsumos(): Promise<InsumoConStock[]> {
+    const insumos = await this.insumos.find({ order: { nombre: 'ASC' } });
+    const sumas = await this.stock
+      .createQueryBuilder('s')
+      .select('s."insumoId"', 'insumoId')
+      .addSelect('COALESCE(SUM(s.cantidad), 0)', 'total')
+      .groupBy('s."insumoId"')
+      .getRawMany<{ insumoId: string; total: string }>();
+
+    const totalPorInsumo = new Map(sumas.map((f) => [f.insumoId, Number(f.total)]));
+    return insumos.map((i) => ({
+      id: i.id,
+      nombre: i.nombre,
+      unidad: i.unidad,
+      umbralMinimo: i.umbralMinimo,
+      precioUnitario: i.precioUnitario,
+      stockTotal: totalPorInsumo.get(i.id) ?? 0,
+    }));
   }
 }
