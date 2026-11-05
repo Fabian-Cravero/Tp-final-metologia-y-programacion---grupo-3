@@ -37,9 +37,13 @@ export class HistoriasController {
   }
 
   @Get()
-  @Roles(RolUsuario.MEDICO, RolUsuario.ENFERMERO, RolUsuario.ADMIN)
-  verHistoria(@Param('pacienteId', ParseUUIDPipe) pacienteId: string) {
-    return this.obtener.ejecutar(pacienteId);
+  @Roles(RolUsuario.MEDICO, RolUsuario.ENFERMERO, RolUsuario.ADMIN, RolUsuario.PACIENTE)
+  verHistoria(
+    @Param('pacienteId', ParseUUIDPipe) pacienteId: string,
+    @UsuarioActual() usuario: UsuarioAutenticado,
+  ) {
+    // Si es un paciente, el caso de uso comprueba que sea su propia historia.
+    return this.obtener.ejecutar(pacienteId, usuario);
   }
 
   @Post('alergias')

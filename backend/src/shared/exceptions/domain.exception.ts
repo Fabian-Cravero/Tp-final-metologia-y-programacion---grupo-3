@@ -35,6 +35,14 @@ export class TransicionInvalidaException extends DomainException {
   }
 }
 
+/** El usuario está autenticado pero no puede ver o tocar ese recurso (HTTP 403). */
+export class AccesoDenegadoException extends DomainException {
+  constructor(mensaje: string) {
+    super(mensaje);
+    this.name = 'AccesoDenegadoException';
+  }
+}
+
 export class CredencialesInvalidasException extends DomainException {
   constructor() {
     super('Email o contraseña incorrectos');

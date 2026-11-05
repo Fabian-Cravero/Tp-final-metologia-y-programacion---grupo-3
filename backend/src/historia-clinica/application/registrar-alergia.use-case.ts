@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { DomainException } from '../../shared/exceptions/domain.exception';
 import { Alergia } from '../domain/entities/alergia.entity';
 import {
   HISTORIA_CLINICA_REPOSITORY,
@@ -13,8 +14,10 @@ export class RegistrarAlergiaUseCase {
   ) {}
 
   async ejecutar(pacienteId: string, sustancia: string, severidad: string): Promise<Alergia> {
+    const sustanciaLimpia = (sustancia ?? '').trim();
+    if (!sustanciaLimpia) throw new DomainException('La sustancia de la alergia es obligatoria');
+
     const historia = await historiaRequerida(this.historias, pacienteId);
-    return this.historias.agregarAlergia(historia.id, sustancia.trim(), severidad);
+    return this.historias.agregarAlergia(historia.id, sustanciaLimpia, severidad);
   }
 }
-

@@ -16,6 +16,10 @@ export class TypeOrmPacienteRepository implements IPacienteRepository {
     return this.repo.findOneBy({ dni });
   }
 
+  findByUsuarioId(usuarioId: string) {
+    return this.repo.findOneBy({ usuarioId });
+  }
+
   buscar(texto: string) {
     return this.repo.find({
       where: [{ apellido: ILike(`%${texto}%`) }, { dni: ILike(`${texto}%`) }],

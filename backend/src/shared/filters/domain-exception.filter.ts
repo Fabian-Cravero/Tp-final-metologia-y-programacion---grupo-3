@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import {
+  AccesoDenegadoException,
   ConflictoDeConcurrenciaException,
   CredencialesInvalidasException,
   DomainException,
@@ -28,6 +29,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
     if (exception instanceof ConflictoDeConcurrenciaException) return HttpStatus.CONFLICT;
     if (exception instanceof RecursoNoEncontradoException) return HttpStatus.NOT_FOUND;
     if (exception instanceof CredencialesInvalidasException) return HttpStatus.UNAUTHORIZED;
+    if (exception instanceof AccesoDenegadoException) return HttpStatus.FORBIDDEN;
     return HttpStatus.UNPROCESSABLE_ENTITY;
   }
 }

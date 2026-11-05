@@ -5,7 +5,7 @@ import { HistoriaClinica } from '../entities/historia-clinica.entity';
 
 export interface IHistoriaClinicaRepository {
   findByPaciente(pacienteId: string): Promise<HistoriaClinica | null>;
-  /** Lanza DomainException si el paciente ya tenía historia. */
+  /** Si otra petición la creó al mismo tiempo, devuelve esa (la base no deja duplicar). */
   crear(pacienteId: string, grupoSanguineo: string | null): Promise<HistoriaClinica>;
 
   agregarAlergia(historiaId: string, sustancia: string, severidad: string): Promise<Alergia>;

@@ -1,5 +1,6 @@
 import { ArgumentsHost } from '@nestjs/common';
 import {
+  AccesoDenegadoException,
   ConflictoDeConcurrenciaException,
   CredencialesInvalidasException,
   DomainException,
@@ -69,6 +70,19 @@ describe('DomainExceptionFilter', () => {
       statusCode: 401,
       error: 'CredencialesInvalidasException',
       message: 'Email o contraseña incorrectos',
+    });
+  });
+
+  it('traduce un acceso denegado a HTTP 403', () => {
+    const { host, status, json } = crearHost();
+
+    filter.catch(new AccesoDenegadoException('Solo podés ver tu propia historia clínica'), host);
+
+    expect(status).toHaveBeenCalledWith(403);
+    expect(json).toHaveBeenCalledWith({
+      statusCode: 403,
+      error: 'AccesoDenegadoException',
+      message: 'Solo podés ver tu propia historia clínica',
     });
   });
 });

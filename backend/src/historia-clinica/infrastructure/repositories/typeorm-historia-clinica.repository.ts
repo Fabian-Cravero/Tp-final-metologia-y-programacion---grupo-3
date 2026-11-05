@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { esViolacionDeUnicidad } from '../../../shared/database/errores-pg';
-import { DomainException } from '../../../shared/exceptions/domain.exception';
 import { Alergia } from '../../domain/entities/alergia.entity';
 import { AntecedenteFamiliar } from '../../domain/entities/antecedente-familiar.entity';
 import { Evolucion } from '../../domain/entities/evolucion.entity';
@@ -27,7 +26,11 @@ export class TypeOrmHistoriaClinicaRepository implements IHistoriaClinicaReposit
       return await this.historias.save(this.historias.create({ pacienteId, grupoSanguineo }));
     } catch (error) {
       // Dos aperturas simultáneas: la base (pacienteId unique) deja pasar solo una.
-      if (esViolacionDeUnicidad(error)) throw new DomainException('El paciente ya tiene historia clínica');
+      // La que pierde devuelve la que ganó, así abrir sigue siendo idempotente.
+      if (esViolacionDeUnicidad(error)) {
+        const existente = await this.historias.findOneBy({ pacienteId });
+        if (existente) return existente;
+      }
       throw error;
     }
   }

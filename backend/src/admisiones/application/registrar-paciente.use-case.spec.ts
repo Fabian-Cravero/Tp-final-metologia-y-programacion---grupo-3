@@ -8,6 +8,7 @@ class PacientesEnMemoria implements IPacienteRepository {
 
   async findById(id: string) { return this.guardados.find((p) => p.id === id) ?? null; }
   async findByDni(dni: string) { return this.guardados.find((p) => p.dni === dni) ?? null; }
+  async findByUsuarioId(u: string) { return this.guardados.find((p) => p.usuarioId === u) ?? null; }
   async buscar() { return this.guardados; }
   async save(p: Paciente) { this.guardados.push(p); return p; }
 }
