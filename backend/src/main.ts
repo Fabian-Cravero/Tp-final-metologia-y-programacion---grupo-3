@@ -7,6 +7,11 @@ import { DomainExceptionFilter } from './shared/filters/domain-exception.filter'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // El frontend (Vite) corre en otro puerto: sin CORS el navegador bloquea las llamadas.
+  app.enableCors({
+    origin: (process.env.FRONTEND_URL ?? 'http://localhost:5173').split(','),
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

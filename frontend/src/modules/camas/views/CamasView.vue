@@ -1,10 +1,19 @@
 <script setup lang="ts">
-// TODO: conectar con GET /camas del backend.
+import { ref } from 'vue';
+import InventarioPanel from '../components/InventarioPanel.vue';
+import MapaCamasPanel from '../components/MapaCamasPanel.vue';
+
+const pestana = ref<'mapa' | 'inventario'>('mapa');
 </script>
 
 <template>
-  <div class="vista-modulo">
-    <h1>Recursos y Camas</h1>
-    <p>Estructura lista — falta implementar.</p>
-  </div>
+  <section>
+    <div class="encabezado"><h1>Camas e inventario</h1></div>
+    <div class="tabs" role="tablist">
+      <button :class="{ activa: pestana === 'mapa' }" @click="pestana = 'mapa'">Mapa de camas</button>
+      <button :class="{ activa: pestana === 'inventario' }" @click="pestana = 'inventario'">Inventario</button>
+    </div>
+    <MapaCamasPanel v-if="pestana === 'mapa'" />
+    <InventarioPanel v-else />
+  </section>
 </template>
