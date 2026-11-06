@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAuthStore } from '../../auth/stores/auth.store';
+import { ROLES, type Rol } from '../../../shared/types/roles';
 import AgendaPanel from '../components/AgendaPanel.vue';
 import ColaPanel from '../components/ColaPanel.vue';
 import MedicosPanel from '../components/MedicosPanel.vue';
@@ -11,14 +12,16 @@ type Pestana = 'agenda' | 'cola' | 'pacientes' | 'medicos';
 
 const auth = useAuthStore();
 const agenda = useAgendaStore();
-const pestana = ref<Pestana>('agenda');
 
-const pestanas: { id: Pestana; texto: string }[] = [
-  { id: 'agenda', texto: 'Agenda' },
+// Cada pestaña con los roles que el backend deja usar (sin roles: todo el personal).
+const todas: { id: Pestana; texto: string; roles?: Rol[] }[] = [
+  { id: 'agenda', texto: 'Agenda', roles: [ROLES.ADMIN, ROLES.RECEPCIONISTA, ROLES.MEDICO] },
   { id: 'cola', texto: 'Sala de espera' },
   { id: 'pacientes', texto: 'Pacientes' },
   { id: 'medicos', texto: 'Médicos' },
 ];
+const pestanas = todas.filter((p) => !p.roles || auth.tieneRol(...p.roles));
+const pestana = ref<Pestana>(pestanas[0].id);
 
 void agenda.cargarMedicos(auth.usuario?.id);
 </script>

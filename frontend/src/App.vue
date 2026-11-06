@@ -11,9 +11,10 @@ const router = useRouter();
 // El menú muestra solo los módulos que el rol puede usar.
 const menu = computed(() => rutasDelMenu(auth.rol));
 
+/** Recarga completa: borra todo el estado en memoria (agenda, listas) del usuario que sale. */
 function salir() {
   auth.cerrarSesion();
-  void router.push({ name: 'login' });
+  window.location.assign(router.resolve({ name: 'login' }).href);
 }
 </script>
 

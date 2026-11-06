@@ -139,7 +139,12 @@ watch(paciente, () => void cargar());
           <p><button class="btn btn--primario">Guardar evolución</button></p>
         </form>
         <article v-for="e in historia.evoluciones" :key="e.id" class="card">
-          <p class="tenue">{{ fechaHora(e.fecha) }}</p>
+          <p class="tenue">
+            {{ fechaHora(e.fecha) }} ·
+            <strong v-if="e.medico">{{ e.medico.nombre }} {{ e.medico.apellido }}</strong>
+            <span v-if="e.medico"> · {{ e.medico.matricula }} · {{ e.medico.especialidad }}</span>
+            <span v-else>médico no encontrado</span>
+          </p>
           <p>{{ e.nota }}</p>
         </article>
         <p v-if="!historia.evoluciones.length" class="vacio">Sin evoluciones todavía.</p>

@@ -41,7 +41,7 @@ export class IndicacionesController {
   }
 
   @Get('pacientes/:pacienteId/indicaciones')
-  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO)
+  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO, RolUsuario.ADMIN)
   listarPendientes(@Param('pacienteId', ParseUUIDPipe) pacienteId: string) {
     return this.pendientes.ejecutar(pacienteId);
   }

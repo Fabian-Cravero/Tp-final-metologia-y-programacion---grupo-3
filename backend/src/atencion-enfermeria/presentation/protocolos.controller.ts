@@ -27,13 +27,13 @@ export class ProtocolosController {
   }
 
   @Get('pacientes/:pacienteId/protocolos')
-  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO)
+  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO, RolUsuario.ADMIN)
   protocolosDelPaciente(@Param('pacienteId', ParseUUIDPipe) pacienteId: string) {
     return this.consultar.delPaciente(pacienteId);
   }
 
   @Get('protocolos/:id/tareas')
-  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO)
+  @Roles(RolUsuario.ENFERMERO, RolUsuario.MEDICO, RolUsuario.ADMIN)
   verTareas(@Param('id', ParseUUIDPipe) id: string) {
     return this.consultar.conTareas(id);
   }

@@ -11,7 +11,8 @@ export interface HistoriaClinica {
 
 export interface Alergia { id: string; sustancia: string; severidad: Severidad }
 export interface Antecedente { id: string; parentesco: string; descripcion: string }
-export interface Evolucion { id: string; medicoId: string; nota: string; fecha: string }
+export interface FirmaMedico { id: string; nombre: string; apellido: string; matricula: string; especialidad: string }
+export interface Evolucion { id: string; medicoId: string; nota: string; fecha: string; medico: FirmaMedico | null }
 
 export interface HistoriaCompleta {
   historia: HistoriaClinica;

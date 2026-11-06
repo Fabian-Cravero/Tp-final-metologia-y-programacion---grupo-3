@@ -16,7 +16,8 @@ conectarSesion({
   obtenerToken: () => auth.token,
   alExpirarSesion: () => {
     auth.cerrarSesion();
-    void router.push({ name: 'login', query: { expirada: '1' } });
+    // Recarga completa para no dejar en memoria datos del usuario cuya sesión venció.
+    window.location.assign(router.resolve({ name: 'login', query: { expirada: '1' } }).href);
   },
 });
 

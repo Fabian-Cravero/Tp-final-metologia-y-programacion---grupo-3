@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  type IMedicoRepository,
+  MEDICO_REPOSITORY,
+} from '../../admisiones/domain/repositories/medico-repository.interface';
+import {
   type IPacienteRepository,
   PACIENTE_REPOSITORY,
 } from '../../admisiones/domain/repositories/paciente-repository.interface';
@@ -15,11 +19,22 @@ import {
 } from '../domain/repositories/historia-clinica-repository.interface';
 import { historiaRequerida } from './historia-requerida';
 
+/** Quién firmó la evolución, para mostrarlo sin otra consulta. */
+export interface FirmaMedico {
+  id: string;
+  nombre: string;
+  apellido: string;
+  matricula: string;
+  especialidad: string;
+}
+
+export type EvolucionFirmada = Evolucion & { medico: FirmaMedico | null };
+
 export interface HistoriaCompleta {
   historia: HistoriaClinica;
   alergias: Alergia[];
   antecedentes: AntecedenteFamiliar[];
-  evoluciones: Evolucion[];
+  evoluciones: EvolucionFirmada[];
 }
 
 /** Quién pide la historia: sale del token, nunca del cuerpo de la petición. */
@@ -33,6 +48,7 @@ export class ObtenerHistoriaCompletaUseCase {
   constructor(
     @Inject(HISTORIA_CLINICA_REPOSITORY) private readonly historias: IHistoriaClinicaRepository,
     @Inject(PACIENTE_REPOSITORY) private readonly pacientes: IPacienteRepository,
+    @Inject(MEDICO_REPOSITORY) private readonly medicos: IMedicoRepository,
   ) {}
 
   async ejecutar(
@@ -56,6 +72,17 @@ export class ObtenerHistoriaCompletaUseCase {
       this.historias.listarEvoluciones(historia.id, limiteEvoluciones),
     ]);
 
-    return { historia, alergias, antecedentes, evoluciones };
+    return { historia, alergias, antecedentes, evoluciones: await this.conFirma(evoluciones) };
+  }
+
+  /** Agrega a cada evolución los datos del médico que la firmó (una consulta por médico distinto). */
+  private async conFirma(evoluciones: Evolucion[]): Promise<EvolucionFirmada[]> {
+    const ids = [...new Set(evoluciones.map((e) => e.medicoId))];
+    const firmas = new Map<string, FirmaMedico | null>();
+    for (const id of ids) {
+      const m = await this.medicos.findById(id);
+      firmas.set(id, m ? { id: m.id, nombre: m.nombre, apellido: m.apellido, matricula: m.matricula, especialidad: m.especialidad } : null);
+    }
+    return evoluciones.map((e) => Object.assign(e, { medico: firmas.get(e.medicoId) ?? null }));
   }
 }
