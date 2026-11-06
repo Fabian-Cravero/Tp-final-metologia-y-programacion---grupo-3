@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,8 @@ import {
 import { Cobertura } from './cobertura.entity';
 
 @Entity('facturas')
+// Una sola factura abierta por paciente: si dos cargos llegan juntos, la base no deja abrir dos.
+@Index('uq_factura_pendiente_paciente', ['pacienteId'], { unique: true, where: `"estado" = 'pendiente'` })
 export class Factura {
   @PrimaryGeneratedColumn('uuid')
   id: string;
