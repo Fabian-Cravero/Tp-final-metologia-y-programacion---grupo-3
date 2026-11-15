@@ -129,6 +129,13 @@ td.numero, th.numero { text-align: right; font-variant-numeric: tabular-nums; }
 .chip--alerta, .chip--urgente, .chip--en_limpieza, .chip--en_sala_espera, .chip--emitida, .chip--pendiente { background: var(--alerta-suave); color: var(--alerta); }
 .chip--critico, .chip--codigo_rojo, .chip--ocupada, .chip--cancelado, .chip--cancelada, .chip--anulada { background: var(--peligro-suave); color: var(--peligro); }
 .chip--bloqueada { background: var(--borde); color: var(--tenue); }
+/* HU 1.2: turnos afectados por un entreturno. HU 1.3: pacientes asignados desde la lista de espera. */
+.chip--reducido { background: var(--alerta-suave); color: var(--alerta); }
+.etiquetas-turno { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.chip--esperando { background: var(--alerta-suave); color: var(--alerta); }
+.alerta--aviso { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.formulario .casilla { flex-direction: row; align-items: center; gap: 8px; }
+.formulario .casilla input { width: auto; }
 
 /* Selector de paciente */
 .selector-paciente { margin-bottom: 16px; }

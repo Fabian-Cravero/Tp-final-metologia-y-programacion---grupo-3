@@ -7,9 +7,11 @@ import { RolUsuario } from '../../iam/domain/enums/rol.enum';
 import { AtenderTurnoUseCase } from '../application/atender-turno.use-case';
 import { CancelarTurnoUseCase } from '../application/cancelar-turno.use-case';
 import { ConfirmarTurnoUseCase } from '../application/confirmar-turno.use-case';
+import { InsertarEntreturnoUseCase } from '../application/insertar-entreturno.use-case';
 import { ListarAgendaUseCase } from '../application/listar-agenda.use-case';
 import { RegistrarLlegadaUseCase } from '../application/registrar-llegada.use-case';
 import { ReservarTurnoUseCase } from '../application/reservar-turno.use-case';
+import { InsertarEntreturnoDto } from './dto/insertar-entreturno.dto';
 import { ReservarTurnoDto } from './dto/reservar-turno.dto';
 
 @ApiTags('admisiones')
@@ -24,12 +26,20 @@ export class TurnosController {
     private readonly atender: AtenderTurnoUseCase,
     private readonly cancelar: CancelarTurnoUseCase,
     private readonly agenda: ListarAgendaUseCase,
+    private readonly entreturno: InsertarEntreturnoUseCase,
   ) {}
 
   @Post()
   @Roles(RolUsuario.RECEPCIONISTA, RolUsuario.ADMIN)
   crear(@Body() dto: ReservarTurnoDto) {
     return this.reservar.ejecutar(dto);
+  }
+
+  /** HU 1.2: inserta un entreturno achicando el turno que está en curso a esa hora. */
+  @Post('entreturno')
+  @Roles(RolUsuario.RECEPCIONISTA, RolUsuario.ADMIN)
+  insertarEntreturno(@Body() dto: InsertarEntreturnoDto) {
+    return this.entreturno.ejecutar(dto);
   }
 
   @Get()

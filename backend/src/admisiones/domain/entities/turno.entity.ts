@@ -43,6 +43,18 @@ export class Turno {
   @Column({ type: 'varchar', nullable: true })
   motivo: string | null;
 
+  // HU 1.2: los turnos duran 30 minutos, salvo que un entreturno le quite tiempo al anterior.
+  @Column({ type: 'int', default: 30 })
+  duracionMinutos: number;
+
+  // HU 1.2: true si este turno es un entreturno insertado entre dos turnos.
+  @Column({ default: false })
+  esEntreturno: boolean;
+
+  // HU 1.2: true si un entreturno le quitó tiempo a este turno (se avisa al médico en la agenda).
+  @Column({ default: false })
+  duracionReducida: boolean;
+
   // Control de concurrencia optimista desde el primer día (sección 06 del informe).
   @VersionColumn()
   version: number;

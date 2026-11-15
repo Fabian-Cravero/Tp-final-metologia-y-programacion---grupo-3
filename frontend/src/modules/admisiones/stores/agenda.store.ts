@@ -49,10 +49,23 @@ export const useAgendaStore = defineStore('agenda', {
         return mensajeDeError(e);
       }
     },
+    /** HU 1.2: igual que reservar, pero insertando un entreturno. */
+    async insertarEntreturno(turno: NuevoTurno): Promise<string | null> {
+      try {
+        await turnosApi.insertarEntreturno(turno);
+        await this.cargarAgenda(); // el turno anterior cambió de duración: se recarga todo
+        return null;
+      } catch (e) {
+        return mensajeDeError(e);
+      }
+    },
     async cambiarEstado(id: string, accion: AccionTurno): Promise<string | null> {
       try {
         const actualizado = await turnosApi.cambiarEstado(id, accion);
         this.turnos = this.turnos.map((t) => (t.id === id ? { ...t, estado: actualizado.estado } : t));
+        // HU 1.3: al cancelar, el backend puede darle el horario a alguien de la lista de espera.
+        // Eso pasa por un evento, apenas después de responder: esperamos un momento y recargamos.
+        if (accion === 'cancelar') setTimeout(() => void this.cargarAgenda(), 700);
         return null;
       } catch (e) {
         return mensajeDeError(e);

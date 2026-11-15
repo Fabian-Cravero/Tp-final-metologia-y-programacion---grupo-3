@@ -2,7 +2,17 @@ export const EVENTOS = {
   MEDICACION_ADMINISTRADA: 'medicacion.administrada',
   STOCK_BAJO_UMBRAL: 'inventario.stock_bajo',
   SIGNO_VITAL_FUERA_DE_RANGO: 'enfermeria.signo_vital_fuera_de_rango',
+  TURNO_CANCELADO: 'admisiones.turno_cancelado',
 } as const;
+
+/** HU 1.3: se publica al cancelar un turno, para ofrecer el horario a la lista de espera. */
+export interface TurnoCanceladoPayload {
+  turnoId: string;
+  medicoId: string;
+  /** ISO 8601 */
+  fechaHora: string;
+  duracionMinutos: number;
+}
 
 export interface MedicacionAdministradaPayload {
   indicacionId: string;

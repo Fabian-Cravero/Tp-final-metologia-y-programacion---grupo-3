@@ -35,7 +35,7 @@ describe('AdmisionesModule', () => {
     const tablas = getMetadataArgsStorage().tables;
     const nombres = entidadesAdmisiones.map((e) => tablas.find((t) => t.target === e)?.name);
 
-    expect(nombres).toEqual(['pacientes', 'medicos', 'turnos', 'cola_entreturno']);
+    expect(nombres).toEqual(['pacientes', 'medicos', 'turnos', 'cola_entreturno', 'lista_espera']);
   });
 
   it('el turno lleva columna de versión para el locking optimista', () => {

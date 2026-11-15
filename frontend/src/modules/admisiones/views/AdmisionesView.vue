@@ -4,11 +4,12 @@ import { useAuthStore } from '../../auth/stores/auth.store';
 import { ROLES, type Rol } from '../../../shared/types/roles';
 import AgendaPanel from '../components/AgendaPanel.vue';
 import ColaPanel from '../components/ColaPanel.vue';
+import ListaEsperaPanel from '../components/ListaEsperaPanel.vue';
 import MedicosPanel from '../components/MedicosPanel.vue';
 import PacientesPanel from '../components/PacientesPanel.vue';
 import { useAgendaStore } from '../stores/agenda.store';
 
-type Pestana = 'agenda' | 'cola' | 'pacientes' | 'medicos';
+type Pestana = 'agenda' | 'lista-espera' | 'cola' | 'pacientes' | 'medicos';
 
 const auth = useAuthStore();
 const agenda = useAgendaStore();
@@ -16,6 +17,7 @@ const agenda = useAgendaStore();
 // Cada pestaña con los roles que el backend deja usar (sin roles: todo el personal).
 const todas: { id: Pestana; texto: string; roles?: Rol[] }[] = [
   { id: 'agenda', texto: 'Agenda', roles: [ROLES.ADMIN, ROLES.RECEPCIONISTA, ROLES.MEDICO] },
+  { id: 'lista-espera', texto: 'Lista de espera', roles: [ROLES.ADMIN, ROLES.RECEPCIONISTA, ROLES.MEDICO] },
   { id: 'cola', texto: 'Sala de espera' },
   { id: 'pacientes', texto: 'Pacientes' },
   { id: 'medicos', texto: 'Médicos' },
@@ -34,6 +36,7 @@ void agenda.cargarMedicos(auth.usuario?.id);
       <button v-for="p in pestanas" :key="p.id" :class="{ activa: pestana === p.id }" @click="pestana = p.id">{{ p.texto }}</button>
     </div>
     <AgendaPanel v-if="pestana === 'agenda'" />
+    <ListaEsperaPanel v-else-if="pestana === 'lista-espera'" />
     <ColaPanel v-else-if="pestana === 'cola'" />
     <PacientesPanel v-else-if="pestana === 'pacientes'" />
     <MedicosPanel v-else />

@@ -218,6 +218,20 @@ async function main() {
     await api('PATCH', `/admisiones/turnos/${turnosCreados[1].id}/llegada`, { token: recep });
   }
 
+  // 5b. Lista de espera (HU 1.3): Valentina espera un turno con la Dra. Martínez para mañana.
+  //     Si se cancela un turno de ese día, el sistema se lo asigna solo. (422 = ya estaba anotada)
+  paso('Lista de espera');
+  const manana = new Date();
+  manana.setDate(manana.getDate() + 1);
+  const diaManana = `${manana.getFullYear()}-${String(manana.getMonth() + 1).padStart(2, '0')}-${String(manana.getDate()).padStart(2, '0')}`;
+  const espera = await api('POST', '/admisiones/lista-espera', {
+    token: recep,
+    body: { pacienteId: valentina.id, medicoId: medicos.medico.id, dia: diaManana },
+  });
+  if (espera.status === 201) { creados++; console.log(`  ${valentina.apellido} espera turno con ${medicos.medico.apellido} para mañana`); }
+  else if (espera.status === 422) existentes++;
+  else exigir(espera, [201], 'Anotar en la lista de espera');
+
   // 6. Sala de espera (solo si está vacía)
   paso('Sala de espera');
   const cola = exigir(await api('GET', '/admisiones/cola', { token: A, query: { medicoId: medicos.medico.id } }), [200], 'Ver cola');

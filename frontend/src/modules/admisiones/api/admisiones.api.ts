@@ -46,6 +46,10 @@ export interface Turno {
   fechaHora: string;
   estado: EstadoTurno;
   motivo: string | null;
+  /** HU 1.2: 30 minutos, salvo que un entreturno le haya quitado tiempo. */
+  duracionMinutos: number;
+  esEntreturno: boolean;
+  duracionReducida: boolean;
   paciente?: Paciente;
 }
 
@@ -57,6 +61,18 @@ export interface NuevoTurno {
 }
 
 export type Prioridad = 'codigo_rojo' | 'urgente' | 'normal';
+
+/** HU 1.3: un paciente anotado en la lista de espera de un médico para un día. */
+export interface EnListaEspera {
+  id: string;
+  dia: string;
+  estado: 'esperando' | 'asignado';
+  turnoAsignadoId: string | null;
+  fechaHoraAsignada: string | null;
+  avisado: boolean;
+  creadoEn: string;
+  paciente?: Paciente;
+}
 
 export interface EnCola {
   id: string;
@@ -102,6 +118,11 @@ export const turnosApi = {
     const { data } = await httpClient.post<Turno>('/admisiones/turnos', sinVacios(turno));
     return data;
   },
+  /** HU 1.2: entreturno que achica el turno en curso a esa hora. */
+  async insertarEntreturno(turno: NuevoTurno): Promise<Turno> {
+    const { data } = await httpClient.post<Turno>('/admisiones/turnos/entreturno', sinVacios(turno));
+    return data;
+  },
   async cambiarEstado(id: string, accion: AccionTurno): Promise<Turno> {
     const { data } = await httpClient.patch<Turno>(`/admisiones/turnos/${id}/${accion}`);
     return data;
@@ -119,6 +140,21 @@ export const colaApi = {
   },
   async llamarSiguiente(medicoId: string): Promise<EnCola> {
     const { data } = await httpClient.post<EnCola>('/admisiones/cola/siguiente', null, { params: { medicoId } });
+    return data;
+  },
+};
+
+export const listaEsperaApi = {
+  async listar(medicoId: string, dia: string): Promise<EnListaEspera[]> {
+    const { data } = await httpClient.get<EnListaEspera[]>('/admisiones/lista-espera', { params: { medicoId, dia } });
+    return data;
+  },
+  async agregar(pacienteId: string, medicoId: string, dia: string): Promise<EnListaEspera> {
+    const { data } = await httpClient.post<EnListaEspera>('/admisiones/lista-espera', { pacienteId, medicoId, dia });
+    return data;
+  },
+  async marcarAvisado(id: string): Promise<EnListaEspera> {
+    const { data } = await httpClient.patch<EnListaEspera>(`/admisiones/lista-espera/${id}/avisado`);
     return data;
   },
 };

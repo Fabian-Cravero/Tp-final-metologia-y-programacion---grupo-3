@@ -11,12 +11,15 @@ import { ConfirmarTurnoUseCase } from './confirmar-turno.use-case';
 import { RegistrarLlegadaUseCase } from './registrar-llegada.use-case';
 
 function repo(estado: string | null, actualiza = true): ITurnoRepository {
-  const turno = estado ? Object.assign(new Turno(), { id: 't1', estado, version: 1 }) : null;
+  const turno = estado
+    ? Object.assign(new Turno(), { id: 't1', estado, version: 1, medico: { id: 'm1' }, fechaHora: new Date(), duracionMinutos: 30 })
+    : null;
   return {
     findById: async () => turno,
     crear: async () => new Turno(),
     actualizarEstado: async () => actualiza,
     listarPorMedicoYDia: async () => [],
+    insertarEntreturno: async () => new Turno(),
   };
 }
 
@@ -31,7 +34,7 @@ describe('Casos de uso de transición del turno', () => {
   });
 
   it('cancelar un turno ya atendido es una transición inválida', async () => {
-    await expect(new CancelarTurnoUseCase(repo('atendido')).ejecutar('t1')).rejects.toBeInstanceOf(
+    await expect(new CancelarTurnoUseCase(repo('atendido'), { publicar: () => {} }).ejecutar('t1')).rejects.toBeInstanceOf(
       TransicionInvalidaException,
     );
   });

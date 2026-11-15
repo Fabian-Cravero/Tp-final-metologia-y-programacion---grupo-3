@@ -12,6 +12,7 @@ class TurnosEnMemoria implements ITurnoRepository {
   async findById() { return null; }
   async actualizarEstado() { return true; }
   async listarPorMedicoYDia() { return []; }
+  async insertarEntreturno() { return new Turno(); }
 
   async crear(d: NuevoTurno): Promise<Turno> {
     const clave = `${d.medicoId}|${d.fechaHora.toISOString()}`;

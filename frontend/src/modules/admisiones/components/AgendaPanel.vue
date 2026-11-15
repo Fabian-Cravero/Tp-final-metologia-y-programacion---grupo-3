@@ -34,7 +34,8 @@ async function cambiar(id: string, accion: AccionTurno) {
 
 // Reserva
 const paciente = ref<Paciente | null>(null);
-const reserva = reactive({ hora: '09:00', motivo: '' });
+// esEntreturno: HU 1.2, inserta el turno achicando el que está en curso a esa hora.
+const reserva = reactive({ hora: '09:00', motivo: '', esEntreturno: false });
 async function reservar() {
   ok.value = '';
   if (!paciente.value) {
@@ -43,11 +44,13 @@ async function reservar() {
   }
   // La hora se arma en hora local; el navegador la manda con su zona horaria.
   const fechaHora = new Date(`${agenda.dia}T${reserva.hora}:00`).toISOString();
-  const falla = await agenda.reservar({ pacienteId: paciente.value.id, medicoId: agenda.medicoId, fechaHora, motivo: reserva.motivo });
+  const datos = { pacienteId: paciente.value.id, medicoId: agenda.medicoId, fechaHora, motivo: reserva.motivo };
+  const falla = reserva.esEntreturno ? await agenda.insertarEntreturno(datos) : await agenda.reservar(datos);
   error.value = falla ?? '';
   if (!falla) {
-    ok.value = 'Turno reservado.';
+    ok.value = reserva.esEntreturno ? 'Entreturno insertado: se achicó el turno anterior.' : 'Turno reservado.';
     reserva.motivo = '';
+    reserva.esEntreturno = false;
   }
 }
 
@@ -79,7 +82,15 @@ watch(() => [agenda.medicoId, agenda.dia], () => void agenda.cargarAgenda(), { i
           <thead><tr><th>Hora</th><th>Paciente</th><th>Motivo</th><th>Estado</th><th></th></tr></thead>
           <tbody>
             <tr v-for="t in agenda.turnos" :key="t.id">
-              <td>{{ hora(t.fechaHora) }}</td>
+              <td>
+                {{ hora(t.fechaHora) }}
+                <div class="tenue">{{ t.duracionMinutos }} min</div>
+                <!-- HU 1.2: avisa al médico que tiene menos tiempo con este paciente -->
+                <div v-if="t.duracionReducida || t.esEntreturno" class="etiquetas-turno">
+                  <span v-if="t.duracionReducida" class="chip chip--reducido" title="Un entreturno le quitó tiempo a este turno">Tiempo reducido</span>
+                  <span v-if="t.esEntreturno" class="chip">Entreturno</span>
+                </div>
+              </td>
               <td>{{ t.paciente ? `${t.paciente.apellido}, ${t.paciente.nombre}` : '—' }}</td>
               <td class="tenue">{{ t.motivo || '—' }}</td>
               <td><EstadoChip :valor="t.estado" /></td>
@@ -107,7 +118,13 @@ watch(() => [agenda.medicoId, agenda.dia], () => void agenda.cargarAgenda(), { i
       <form class="formulario" @submit.prevent="reservar">
         <label>Hora <input v-model="reserva.hora" type="time" required /></label>
         <label>Motivo <input v-model="reserva.motivo" maxlength="200" /></label>
-        <div class="ancho-total"><button class="btn btn--primario" :disabled="!agenda.medicoId">Reservar</button></div>
+        <label class="ancho-total casilla">
+          <input v-model="reserva.esEntreturno" type="checkbox" />
+          Insertar como entreturno (urgencia menor: achica el turno que está en curso a esa hora)
+        </label>
+        <div class="ancho-total">
+          <button class="btn btn--primario" :disabled="!agenda.medicoId">{{ reserva.esEntreturno ? 'Insertar entreturno' : 'Reservar' }}</button>
+        </div>
       </form>
     </section>
   </div>
